@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>简易会议邀请系统</title>
+<style type="text/css">
+*{margin: 0;padding: 0;}
+li{list-style:none;}
+.writeText{width: 300px;min-height: 30px;border: 1px solid #333;border-radius: 5%;float: left;cursor: no-drop;}
+.writeText{}
+.set{position: relative;margin-bottom:20px;}
+.btn{width: 30px;height: 30px;cursor: pointer;}
+label{float: left;}
+.popupMenu{width: 200px;max-height: 200px;border: 1px solid #000;z-index:100;position: absolute;left: 370px;top: 0;overflow-y:auto;cursor: pointer;display: none;background: white;}
+.popupMenu ul{width: 200px;}
+.popupMenu ul li{padding: 5px;cursor:pointer;}
+#div1{margin: auto;width: 500px;padding: 300px;}
+.popupMenu ul span:hover{background: #06f;color: white;}
+.cur{background: #06f;color:white;}
+.writeText em{width:13px; height:13px; background:url(delete.png) no-repeat; position:absolute; right:0; top:0; cursor:pointer;}
+.writeText span{ float:left; position:relative; line-height:30px; padding:0 10px; cursor:default;}
+</style>
+<script  src="jquery-1.11.1.js"></script>
+<script type="text/javascript">
+$(function(){
+	function popup(id,type,data){
+		bindAddBtn()
+		$(document).on('click',function(){
+			closePopup()
+		})
+		$('#custom_'+id).on('click',function(){
+			return false;
+		})
+		//共用的：点击按钮显示弹窗
+		function bindAddBtn(){
+			$('#add_'+id).on('click',function(){
+				closePopup()
+				if(type==1){
+					createRadio()
+				}
+				else{createMore()}
+				$('#popup_'+id).show()
+
+			})
+		}
+		//不共用的：单选
+		function createRadio(){
+			if(!$('#popup_'+id).find('ul').length){
+				setInitData()
+				bindRadio()
+			}
+			
+		}
+		//多选
+		function createMore(){
+			if(!$('#popup_'+id).find('ul').length){
+				setInitData()
+				setAllCus()
+				bindMore()
+			}
+
+		}
+		//弹窗内容
+		function setInitData(){
+			var $ul=$('<ul>')
+			$.each(data,function(){
+				var $li=$('<li><span>'+this.name+'</span></li>')
+				$ul.append($li);
+			})
+			$('#popup_'+id).append($ul);
+		}
+		//多选按钮
+		function setAllCus(){
+			var $allCus=$('<div><a href="javascript:;">全选</a></div>')
+			$('#popup_'+id).prepend($allCus)
+		}
+		//点击空白区隐藏弹窗
+		function closePopup(){
+			$('.popupMenu').hide()
+		}
+		//单选操作
+		function bindRadio(){
+			var $span = $('#popup_'+id).find('span')
+			 $span.on('click',function(){
+			 	var html =$(this).html()
+				
+
+				if($(this).attr('class')!='cur'){
+					$span.attr('class','')
+					$(this).attr('class','cur')
+					textRadio.add(html)
+				}
+				else{
+					$(this).attr('class','')
+					textRadio.remove(html)
+				}
+
+				 	
+			})
+		}
+		//多选操作
+		function bindMore(){
+			var off =true
+			var $span = $('#popup_'+id).find('span')
+			var $a = $('#popup_'+id).find('a')
+			$span.on('click',function(){
+				var html =$(this).html()
+				if($(this).attr('class')!='cur'){
+					
+					$(this).attr('class','cur')
+					textMore.add(html)
+				}
+				else{
+					$(this).attr('class','')
+					textMore.remove(html)
+				}
+
+			})
+			$('#popup_'+id).find('a').on('click',function(){
+				//var off =true 这里犯了个错，变量设置在这里，每次点击都是true
+				if(off){
+					$span.attr('class','cur')
+					$a.html('取消全选')
+					off = false
+				}
+				else{
+					$span.attr('class','')
+					$a.html('全选')
+					off = true
+				}
+				
+			})
+		}
+		//输入单选操作
+		var  textRadio = (function(){
+			function add(text){
+				var strSpan = '<span>'+text+'<em></em></span>'
+				$('#main_'+id).html(strSpan)
+			}
+			function remove(text){
+				$('#main_'+id).html('')
+			}
+			return{
+				add:add,
+				remove:remove
+			}
+
+		})()
+		//输入多选操作
+		var  textMore = (function(){
+			function add(text){
+				var strSpan = '<span>'+text+'<em></em></span>'
+				$('#main_'+id).append(strSpan)
+			}
+			function remove(text){
+				var strSpan = '<span>'+text+'<em></em></span>'
+				$('#main_'+id).remove(strSpan)
+			}
+			return{
+				add:add,
+				remove:remove
+			}
+
+		})()
+
+	}
+	popup('1000',1,[
+		{name : '办公室'},
+		{name : '会议室'},
+		{name : '室外'},
+		{name : '咖啡厅'}
+	]);
+	
+	popup('2000',1,[
+		{name : '8:00~10:00'},
+		{name : '12:00~13:00'},
+		{name : '14:00~16:00'},
+		{name : '20:00~23:00'},
+		{name : '23:00~00:00'}
+	]);
+	
+	popup('3000',2,[
+		{name : '李彦宏1'},
+		{name : '马云1'},
+		{name : '马化腾1'},
+		{name : '李彦宏2'},
+		{name : '马云2'},
+		{name : '马化腾2'},
+		{name : '李彦宏3'},
+		{name : '马云3'},
+		{name : '马化腾3'},
+		{name : '李彦宏4'},
+		{name : '马云4'},
+		{name : '马化腾4'},
+		{name : '李彦宏5'},
+		{name : '马云5'},
+		{name : '马化腾5'},
+		{name : '李彦宏6'},
+		{name : '马云6'},
+		{name : '马化腾6'},
+		{name : '李彦宏7'},
+		{name : '马云7'},
+		{name : '马化腾7'}
+	]);
+	
+	popup('4000',2,[
+		{name : '采购部'},
+		{name : '销售部'},
+		{name : '策划部'},
+		{name : '运维中心'},
+		{name : 'IT部'},
+		{name : '人力资源'},
+		{name : '行政部门'},
+		{name : '公关部'},
+		{name : '法务部门'},
+		{name : '市场部'},
+		{name : '运营部'},
+		{name : '游戏部门'},
+		{name : '社区部门'},
+		{name : '电商部门'},
+		{name : '客服部'}
+	]);
+})
+</script>
+</head>
+<body>
+<div id="div1">
+	<div id="custom_1000" class="set">
+		<label>时间:</label>
+		<div id ="main_1000" class="writeText">
+		</div>
+		<input type="button" id="add_1000" value="+" class="btn" name="">
+		<input type="button" id="remove_1000" value="-" class="btn" name="">
+		<div id="popup_1000" class ="popupMenu">
+			<!-- <ul>
+            	<li><span>公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span class="cur">公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span class="cur">公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span class="cur">公安局</span></li>
+                <li><span>公安局</span></li>
+                <li><span>公安局</span></li>
+            </ul> -->
+		</div>
+		<br>
+	</div>
+	<div id="custom_2000" class="set">
+        <label>时间:</label><div id="main_2000" class="writeText">
+            
+        </div>
+        <input id="add_2000" class="btn" type="button" value="+">
+        <input id="remove_2000" class="btn" type="button" value="-">
+        <div id="popup_2000" class="popupMenu"></div>
+        <br clear="all"/>
+    </div>
+    <div id="custom_3000" class="set">
+        <label>领导:</label><div id="main_3000" class="writeText">
+            
+        </div>
+        <input id="add_3000" class="btn" type="button" value="+">
+        <input id="remove_3000" class="btn" type="button" value="-">
+        <div id="popup_3000" class="popupMenu"></div>
+        <br clear="all"/>
+    </div>
+    <div id="custom_4000" class="set">
+        <label>部门:</label><div id="main_4000" class="writeText">
+            
+        </div>
+        <input id="add_4000" class="btn" type="button" value="+">
+        <input id="remove_4000" class="btn" type="button" value="-">
+        <div id="popup_4000" class="popupMenu"></div>
+        <br clear="all"/>
+    </div>
+
+</div>
+</body>
+</html>
